@@ -1,0 +1,111 @@
+import java.util.*;
+ 
+// A class to store a graph edge
+class Edge
+{
+    int source, dest;
+ 
+    public Edge(int source, int dest)
+    {
+        this.source = source;
+        this.dest = dest;
+    }
+}
+ 
+class Graph
+{
+    List<List<Integer>> adjList = null;
+ 
+    // Total number of nodes in the graph
+    int n;
+ 
+    Graph(List<Edge> edges, int n)
+    {
+        this.adjList = new ArrayList<>();
+        this.n = n;
+ 
+        for (int i = 0; i < n; i++) {
+            adjList.add(new ArrayList<>());
+        }
+ 
+        for (Edge edge: edges)
+        {
+            int src = edge.source;
+            int dest = edge.dest;
+ 
+            adjList.get(src).add(dest);
+ 
+            adjList.get(dest).add(src);
+        }
+    }
+}
+ 
+public class Q1
+{
+    public static boolean isBipartite(Graph graph)
+    {
+        // get total number of nodes in the graph
+        int n = graph.n;
+ 
+        int v = 0;
+ 
+        boolean[] discovered = new boolean[n];
+ 
+        // stores the level of each vertex in BFS
+        int[] level = new int[n];
+ 
+        discovered[v] = true;
+        level[v] = 0;
+
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(v);
+ 
+        // loop till queue is empty
+        while (!q.isEmpty())
+        {
+            // dequeue front node and print it
+            v = q.poll();
+ 
+            // do for every edge (v, u)
+            for (int u: graph.adjList.get(v))
+            {
+                if (!discovered[u])
+                {
+                    // mark it as discovered
+                    discovered[u] = true;
+ 
+                    level[u] = level[v] + 1;
+ 
+                    // enqueue vertex
+                    q.add(u);
+                }
+                
+                else if (level[v] == level[u]) {
+                    return false;
+                }
+            }
+        }
+ 
+        return true;
+    }
+ 
+    public static void main(String[] args)
+    {
+        // List of graph edges
+        List<Edge> edges = Arrays.asList(
+                    new Edge(0, 1), new Edge(1, 2), new Edge(1, 7), new Edge(2, 3),
+                    new Edge(3, 5), new Edge(4, 6), new Edge(4, 8), new Edge(7, 8)
+                );
+ 
+        int n = 9;
+ 
+        Graph graph = new Graph(edges, n);
+ 
+        if (isBipartite(graph)) {
+            System.out.println("Graph is bipartite");
+        }
+        else {
+            System.out.println("Graph is not bipartite");
+        }
+    }
+}
